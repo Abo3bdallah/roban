@@ -206,6 +206,29 @@
             transform: scale(1);
             opacity: 1;
         }
+
+        /* تنسيق زر الإلغاء الجديد في شاشة الخزنة */
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255, 0, 0, 0.6);
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        .close-button:hover {
+            background: rgba(255, 0, 0, 0.8);
+        }
     </style>
 </head>
 <body class="min-h-screen text-white relative">
@@ -363,7 +386,13 @@
     <div id="treasureScreen" class="hidden fixed inset-0 z-50">
         <div class="ocean-waves"></div>
         <div class="container mx-auto px-4 py-8 h-full flex items-center justify-center">
-            <div class="ship-container backdrop-blur-md rounded-3xl p-8 max-w-2xl w-full border border-cyan-300/30 slide-in">
+            <div class="ship-container backdrop-blur-md rounded-3xl p-8 max-w-2xl w-full border border-cyan-300/30 slide-in relative">
+                
+                <!-- زر إلغاء الإجراء (X) في الزاوية العلوية اليسرى -->
+                <div onclick="cancelAction()" class="close-button" title="إلغاء الإجراء (إعادة فتح الخزنة)">
+                    &times;
+                </div>
+
                 <div class="text-center">
                     <div id="treasureIcon" class="text-8xl mb-6">🏴‍☠️</div>
                     <h2 id="treasureTitle" class="text-3xl font-bold mb-6 text-amber-300">خزنة رقم 1</h2>
@@ -405,14 +434,16 @@
                         <!-- تأثير النقاط سيظهر هنا -->
                     </div>
                     <div id="actionButtons" class="flex gap-4 justify-center mb-6">
+                        <!-- زر التنفيذ -->
                         <button onclick="executeAction()" class="bg-emerald-600 hover:bg-emerald-700 px-8 py-3 rounded-xl font-semibold text-xl transition-colors border border-emerald-400">
                             ⚓ تنفيذ
                         </button>
-                        <button onclick="cancelAction()" class="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-xl font-semibold text-xl transition-colors border border-red-400">
-                            🌊 إلغاء
+                        <!-- زر عدم التنفيذ الجديد -->
+                        <button onclick="skipAction()" class="bg-yellow-600 hover:bg-yellow-700 px-8 py-3 rounded-xl font-semibold text-xl transition-colors border border-yellow-400">
+                            🚫 عدم تنفيذ
                         </button>
                     </div>
-                    <button id="backButton" onclick="closeTreasure()" class="bg-cyan-600 hover:bg-cyan-700 px-8 py-3 rounded-xl font-semibold text-xl transition-colors pulse-glow hidden border border-cyan-400">
+                    <button id="backButton" onclick="closeTreasure(false)" class="bg-cyan-600 hover:bg-cyan-700 px-8 py-3 rounded-xl font-semibold text-xl transition-colors pulse-glow hidden border border-cyan-400">
                         العودة للخزائن 🚢
                     </button>
                 </div>
@@ -526,63 +557,63 @@
             'https://i.postimg.cc/mgXC0HL8/4.png'  // Team 4
         ];
         
-        // مصفوفة روابط صور الخزائن المرقمة
+        // مصفوفة روابط صور الخزائن المرقمة (تم التحديث هنا)
         const TREASURE_IMAGE_URLS = [
             // 1-9
-            'https://i.postimg.cc/XN26C1XX/1.png', 
-            'https://i.postimg.cc/x86HPDhh/2.png', 
-            'https://i.postimg.cc/5ysvmdTh/3.png', 
-            'https://i.postimg.cc/Kj0L5SCy/4.png', 
-            'https://i.postimg.cc/D0xsckRT/5.png', 
-            'https://i.postimg.cc/vT09vFC8/6.png', 
-            'https://i.postimg.cc/90LTB5sD/7.png', 
-            'https://i.postimg.cc/kMsxCKGK/8.png', 
-            'https://i.postimg.cc/jqczTP2H/9.png', 
+            'https://i.postimg.cc/05dHRC7G/1.png', 
+            'https://i.postimg.cc/ZYFDtL6L/2.png', 
+            'https://i.postimg.cc/SNS1yzGY/3.png', 
+            'https://i.postimg.cc/SNS1yzGM/4.png', 
+            'https://i.postimg.cc/qMJDkCGK/5.png', 
+            'https://i.postimg.cc/Qx8YXWqk/6.png', 
+            'https://i.postimg.cc/kXJYntyv/7.png', 
+            'https://i.postimg.cc/HsYvp7tB/8.png', 
+            'https://i.postimg.cc/xTfp0bPx/9.png', 
             // 10-19
-            'https://i.postimg.cc/2jG4Yhyd/10.png', 
-            'https://i.postimg.cc/h4s9nTv0/11.png', 
-            'https://i.postimg.cc/2jG4Yhyw/12.png', 
-            'https://i.postimg.cc/66cdKnqH/13.png', 
-            'https://i.postimg.cc/NGD1tmFC/14.png', 
-            'https://i.postimg.cc/J7xb8Z0d/15.png', 
-            'https://i.postimg.cc/ryjSTxsH/16.png', 
-            'https://i.postimg.cc/Df6qhL0D/17.png', 
-            'https://i.postimg.cc/FFpjv3z8/18.png', 
-            'https://i.postimg.cc/ZYHrmpnX/19.png',
+            'https://i.postimg.cc/SNS1yzGv/10.png', 
+            'https://i.postimg.cc/yY1pVSTt/11.png', 
+            'https://i.postimg.cc/65Wb9GhD/12.png', 
+            'https://i.postimg.cc/Dyvp2bgV/13.png', 
+            'https://i.postimg.cc/sDjHVZJk/14.png', 
+            'https://i.postimg.cc/c4xks8my/15.png', 
+            'https://i.postimg.cc/GhX79hMM/16.png', 
+            'https://i.postimg.cc/PrS3Nr63/17.png', 
+            'https://i.postimg.cc/8PZKsPyX/18.png', 
+            'https://i.postimg.cc/BQmYtQhk/19.png',
             // 20-29
-            'https://i.postimg.cc/CM7j0k53/20.png',
-            'https://i.postimg.cc/Vsgjwn5Q/21.png',
-            'https://i.postimg.cc/bYgQPkdj/22.png',
-            'https://i.postimg.cc/qBw8rygT/23.png',
-            'https://i.postimg.cc/7YLSZhJc/24.png',
-            'https://i.postimg.cc/HsLbkn8R/25.png',
-            'https://i.postimg.cc/c4JfLC8y/26.png',
-            'https://i.postimg.cc/FsK0HzJv/27.png',
-            'https://i.postimg.cc/65QCpqGW/28.png',
-            'https://i.postimg.cc/HsLbkn7W/29.png',
+            'https://i.postimg.cc/nc3RMcd6/20.png',
+            'https://i.postimg.cc/65MjT5jJ/21.png',
+            'https://i.postimg.cc/65MjT5jt/22.png',
+            'https://i.postimg.cc/zXxt3XtJ/23.png',
+            'https://i.postimg.cc/c4F96491/24.png',
+            'https://i.postimg.cc/rFfnzFnF/25.png',
+            'https://i.postimg.cc/CLcPdLP5/26.png',
+            'https://i.postimg.cc/Dyxjmyjm/27.png',
+            'https://i.postimg.cc/15vC45C8/28.png',
+            'https://i.postimg.cc/CLcPdLPz/29.png',
             // 30-39
-            'https://i.postimg.cc/pXdKLrnr/30.png',
-            'https://i.postimg.cc/285nSyBV/31.png',
-            'https://i.postimg.cc/c4JfLC8v/32.png',
-            'https://i.postimg.cc/J4hjz0BD/33.png',
-            'https://i.postimg.cc/vHm5ZT6f/34.png',
-            'https://i.postimg.cc/qM72vqCK/35.png',
-            'https://i.postimg.cc/rFp5wstr/36.png',
-            'https://i.postimg.cc/YqyYG719/37.png',
-            'https://i.postimg.cc/KvsBkbnR/38.png',
-            'https://i.postimg.cc/9FNZR2GD/39.png',
+            'https://i.postimg.cc/t47r6Qw9/30.png',
+            'https://i.postimg.cc/T3hkbMFd/31.png',
+            'https://i.postimg.cc/BnthF9kZ/32.png',
+            'https://i.postimg.cc/vZDPnFkH/33.png',
+            'https://i.postimg.cc/8zsyvQ9C/34.png',
+            'https://i.postimg.cc/SxjZ9F3n/35.png',
+            'https://i.postimg.cc/x1qsmDhk/36.png',
+            'https://i.postimg.cc/zG3dhZ6V/37.png',
+            'https://i.postimg.cc/52jPzdT8/38.png',
+            'https://i.postimg.cc/Z50fNt2r/39.png',
             // 40-50
-            'https://i.postimg.cc/BQwHL3xL/40.png',
-            'https://i.postimg.cc/xTFMJQKz/41.png',
-            'https://i.postimg.cc/TYHgLxrr/42.png',
-            'https://i.postimg.cc/Fsn3dvjV/43.png',
-            'https://i.postimg.cc/X7DdGWwQ/44.png',
-            'https://i.postimg.cc/CL6kB0jv/45.png',
-            'https://i.postimg.cc/CL6kB0j6/46.png',
-            'https://i.postimg.cc/YqyYG71D/47.png',
-            'https://i.postimg.cc/5NkLYJwR/48.png',
-            'https://i.postimg.cc/5ysvmdTR/49.png',
-            'https://i.postimg.cc/J0pJQVvS/50.png'
+            'https://i.postimg.cc/pLy0jb4Q/40.png',
+            'https://i.postimg.cc/vZDPnFkr/41.png',
+            'https://i.postimg.cc/YCjXFKZd/42.png',
+            'https://i.postimg.cc/RhRP7MvY/43.png',
+            'https://i.postimg.cc/v8LSFv5Y/44.png',
+            'https://i.postimg.cc/zDSPZkT8/45.png',
+            'https://i.postimg.cc/66L1JhC9/46.png',
+            'https://i.postimg.cc/tRtmQzF9/47.png',
+            'https://i.postimg.cc/44bFk1p9/48.png',
+            'https://i.postimg.cc/7PMQ8NST/49.png',
+            'https://i.postimg.cc/L4B0KVjz/50.png'
         ];
         
         // ** تحديث قائمة أسماء الفرق: يتم الآن تخزين أيقونة الفريق كنص عادي (مثل "الطاقم الأول")، والأيقونة ستكون صورة
@@ -1252,6 +1283,7 @@
                     applyPointsEffect(gameState.currentTreasure.points, targetTeam, customPoints);
                 }
                 
+                // بعد التنفيذ، يجب إغلاق الشاشة
                 document.getElementById('actionButtons').classList.add('hidden');
                 document.getElementById('teamSelector').classList.add('hidden');
                 document.getElementById('pointsInput').classList.add('hidden');
@@ -1260,20 +1292,16 @@
             }
         }
 
-        // إلغاء الإجراء
-        function cancelAction() {
-            if (gameState.currentBoxNumber) {
-                gameState.openedBoxes.delete(gameState.currentBoxNumber);
-                saveGameState();
-                createTreasureGrid();
-                updateReopenBoxSelect();
-            }
+        // دالة جديدة: عدم تنفيذ (يغلق الصندوق وينتقل للدور التالي دون تطبيق أي تأثير)
+        function skipAction() {
+            // لا يتم تطبيق أي نقاط أو تأثيرات
             
             const pointsElement = document.getElementById('pointsEffect');
-            pointsElement.textContent = '❌ تم إلغاء الإجراء';
-            pointsElement.className = 'text-4xl font-bold mb-6 text-gray-400';
+            pointsElement.textContent = '🚫 لم يتم تنفيذ الأمر';
+            pointsElement.className = 'text-4xl font-bold mb-6 text-yellow-400';
             pointsElement.classList.remove('hidden');
             
+            // إخفاء الأزرار وإظهار زر العودة
             document.getElementById('actionButtons').classList.add('hidden');
             document.getElementById('teamSelector').classList.add('hidden');
             document.getElementById('pointsInput').classList.add('hidden');
@@ -1281,8 +1309,23 @@
             document.getElementById('backButton').classList.remove('hidden');
         }
 
-        // إغلاق شاشة الخزنة
-        function closeTreasure() {
+        // دالة إلغاء الإجراء (زر الـ X) - تزيل الخزنة من المفتوحة وتغلق الشاشة
+        function cancelAction() {
+            if (gameState.currentBoxNumber) {
+                // إعادة الخزنة إلى حالة "غير مفتوحة"
+                gameState.openedBoxes.delete(gameState.currentBoxNumber);
+                saveGameState();
+                createTreasureGrid();
+                updateReopenBoxSelect();
+            }
+            
+            // إغلاق الشاشة والانتقال للفريق التالي (مثل closeTreasure)
+            closeTreasure(true); // نمرر true لتعيين الفريق التالي
+            showPointsAnimation('❌ تم إلغاء الإجراء وإعادة فتح الخزنة', 'red');
+        }
+
+        // إغلاق شاشة الخزنة (Close Treasure)
+        function closeTreasure(shouldGoToNextTeam = true) {
             document.getElementById('treasureScreen').classList.add('hidden');
             document.getElementById('mainScreen').classList.remove('hidden');
             document.getElementById('pointsEffect').classList.add('hidden');
@@ -1290,8 +1333,11 @@
             gameState.currentTreasure = null;
             gameState.currentBoxNumber = null;
             
-            gameState.currentTeam = (gameState.currentTeam + 1) % gameState.numTeams; 
-            document.getElementById('currentTeam').value = gameState.currentTeam;
+            if (shouldGoToNextTeam) {
+                gameState.currentTeam = (gameState.currentTeam + 1) % gameState.numTeams; 
+                document.getElementById('currentTeam').value = gameState.currentTeam;
+            }
+            
             saveGameState();
         }
 
